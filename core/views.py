@@ -53,13 +53,11 @@ def all(request):
     if request.method =="GET":
         querySet =User.objects.all()
         serializer =userSerializer(querySet,many=True)
-        if serializer.is_valid():
+        return Response(serializer.data,status=status.HTTP_200_OK)
+        # else:
+        #     return Response(serializer.errors,status=status.HTTP_200_OK)
             
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        
-        
     else:
-        
         return Response({"error":"invalid request method"},status=status.HTTP_405_METHOD_NOT_ALLOWED)    
         
         
