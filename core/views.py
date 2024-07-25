@@ -6,12 +6,14 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
+import json
 
 @api_view(["GET"])
 def all(request):
     if request.method =="GET":
         querySet = User.objects.all()
         serializer =userSerializer(querySet,many=True)
+        print(type(serializer.data))
         return Response(serializer.data, status=status.HTTP_200_OK)
        
     
@@ -64,8 +66,9 @@ def allOne(request,pk):
 @api_view(["POST"])
 def signup(request):
     if request.method =="POST":
-        data= request.data
+        data= request.data          
         serializer =userSerializer(data=data)
+        
         if serializer.is_valid():
             serializer.save()
             user =User.objects.get(username=data["username"])
@@ -77,90 +80,6 @@ def signup(request):
     else:
         return Response("use post",status=status.HTTP_502_BAD_GATEWAY)   
     
-    
-@api_view(["POST"])
-def login(request):
-    if request.method=="POST":
-        queryset =request.data
-        serializer =userSerializer(data=queryset)
-        if serializer.is_valid():
-            user =get_object_or_404(User, email=queryset["email"])
-            if not user.check_password(pasword=queryset["password"]):
-                return Response("user signed in ",status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)    
-        
-        
-    else:
-        return Response("invalid verb",status=status.HTTP_400_BAD_REQUEST)         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @api_view(["POST"])
-# def signup(request):
-#     print("block0")
-#     if request.method =="POST":
-#         print("block1")
-#         data =request.data
-#         serializer = userSerializer(data=data,many=False)
-#         if serializer.is_valid():
-#             serializer.save()
-#             user =User.objects.get(username =data["username"])
-#             user.set_password(data["password"])
-#             user.save()
-#             return Response({"message":"success"},status=status.HTTP_201_CREATED)
-#         else:
-#             print(f"serializer error {serializer.errors}")
-#             return Response(serializer.errors,status=status.HTTP_406_NOT_ACCEPTABLE)
-#     else:
-#         return Response({"message":"error method not allowed"}, status=status.HTTP_400_BAD_REQUEST)
-    
- 
-# @api_view(["POST"])
-# def login(request):
-#     if request.method =="POST":
-#         data =request.data
-#         serializer =userSerializer(data=data)
-#         if serializer.is_valid():
-#             user =get_object_or_404(User,username =data["username"])
-#             if not user.check_password(data["password"]):
-#                 return Response({"message":"success"},status=status.HTTP_200_OK)
-#             # else:
-#             #     return Response({"error":"User not found"},status=status.HTTP_400_BAD_REQUEST)
-#         else:
-           
-#             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)    
-        
-       
-#     else:
-        
-#         return Response(status=status.HTTP_400_BAD_REQUEST)    
-    
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -169,15 +88,18 @@ def login(request):
     if request.method =="POST":
         print("block1")
         data =request.data
-        serializer =userSerializer(data=data)
+        # serializer =userSerializer(data=data)
         username =data["username"]
         password =data["password"]
+        # email =data["email"]
+        
         user =authenticate(username=username,password=password)
         if user is not None:
             serialzer =userSerializer(user)
+            print(type(json.dumps(serialzer.data)))
             return Response(serialzer.data,status=status.HTTP_200_OK)
         else:
-            return Response("invalid username or password",status=status.HTTP_400_BAD_REQUEST) 
+            return Response("username or password are invalid" ,status=status.HTTP_400_BAD_REQUEST) 
         
         
         # if serializer.is_valid():
@@ -194,26 +116,4 @@ def login(request):
 
     else:
         return Response({"error":"bad request method"}, status=status.HTTP_400_BAD_REQUEST)
-    
-# @api_view(["POST"])
-# def signup(request):
-#     if request.method =="POST":
-#         data =request.data
-#         serialzer =userSerializer(data=data)
-#         if serialzer.is_valid():
-#             serialzer.save()
-#             user  =User.objects.get(username=data["username"])
-            
-#             user.set_password(data["password"])
-#             user.save()
-#             return Response({"message":"User saved Corrected"},status=status.HTTP_200_OK)
-#         else:
-#             return Response(serialzer.errors,status=status.HTTP_406_NOT_ACCEPTABLE)
-            
-        
-        
-#     else:
-#         return Response({"error":"bad request method"}, status=status.HTTP_400_BAD_REQUEST)        
-
-
-        
+ 

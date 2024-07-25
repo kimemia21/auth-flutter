@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:51897',
+    'http://localhost:62846',
 ] 
 LANGUAGE_CODE = 'en-us'
 
